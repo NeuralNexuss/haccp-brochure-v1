@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HACCP Compliance Platform - Real-Time Operations</title>
+    <style>
+        :root {
+            --color-bg: #0a0f1a;
+            --color-surface: #141b2d;
+            --color-text: #ffffff;
+            --color-text-dim: #b4c5e0;
+            --color-text-muted: #8a9bb5;
+            --color-accent: #ff6b35;
+            --color-accent-glow: rgba(255, 107, 53, 0.2);
+            --color-cyan: #00d9ff;
+            --color-cyan-glow: rgba(0, 217, 255, 0.15);
+            --font-display: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --font-mono: Monaco, 'Courier New', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-display);
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Grid overlay for industrial feel - behind all content */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(255, 107, 53, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 107, 53, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 4rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Hero / Navigation */
+        header {
+            padding: 2rem 0;
+            border-bottom: 1px solid rgba(255, 107, 53, 0.2);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--color-accent);
+            font-family: var(--font-mono);
+        }
+
+        /* Section base styles */
+        section {
+            padding: 4rem 0;
+            opacity: 0;
+            transform: translateY(60px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        section:nth-child(2) { animation-delay: 0.2s; }
+        section:nth-child(3) { animation-delay: 0.4s; }
+        section:nth-child(4) { animation-delay: 0.6s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Section labels */
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--color-accent);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-label::before {
+            content: '';
+            width: 40px;
+            height: 2px;
+            background: var(--color-accent);
+        }
+
+        /* Typography */
+        h1, h2 {
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 7rem);
+            margin-bottom: 2rem;
+            color: var(--color-text);
+        }
+
+        h2 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            margin-bottom: 3rem;
+            color: var(--color-text);
+        }
+
+        .highlight {
+            color: var(--color-accent);
+            position: relative;
+        }
+
+        .highlight-cyan {
+            color: var(--color-cyan);
+        }
+
+        /* SLIDE 1: THE PROBLEM */
+        #problem {
+            position: relative;
+        }
+
+        .problem-intro {
+            font-size: 1.5rem;
+            font-weight: 300;
+            max-width: 800px;
+            margin-bottom: 5rem;
+            color: var(--color-text-dim);
+            line-height: 1.8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-bottom: 5rem;
+        }
+
+        .stat-card {
+            background: var(--color-surface);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-accent), transparent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-accent);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-number {
+            font-family: var(--font-mono);
+            font-size: 3.5rem;
+            font-weight: 600;
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--color-text);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-description {
+            font-size: 0.95rem;
+            color: var(--color-text-dim);
+            line-height: 1.6;
+        }
+
+        .consequences {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, transparent 100%);
+            border-left: 4px solid var(--color-accent);
+            padding: 3rem;
+            margin-top: 4rem;
+        }
+
+        .consequences h3 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--color-accent);
+        }
+
+        .consequence-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .consequence-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .consequence-cost {
+            font-family: var(--font-mono);
+            font-size: 1.8rem;
+            color: var(--color-cyan);
+            font-weight: 600;
+        }
+
+        .consequence-desc {
+            color: var(--color-text-dim);
+            font-size: 0.95rem;
+        }
+
+        /* SLIDE 2: SOLUTION */
+        #solution {
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 217, 255, 0.03) 100%);
+        }
+
+        .solution-intro {
+            max-width: 900px;
+            font-size: 1.3rem;
+            margin-bottom: 5rem;
+            line-height: 1.8;
+            color: var(--color-text-dim);
+        }
+
+        .solution-pillars {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 4rem;
+            margin-bottom: 5rem;
+        }
+
+        .pillar {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .pillar::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--color-cyan), transparent);
+        }
+
+        .pillar-number {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: var(--color-cyan);
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+
+        .pillar h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-cyan);
+            line-height: 1.3;
+        }
+
+        .pillar-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .pillar-features li {
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--color-text-dim);
+        }
+
+        .pillar-features li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--color-cyan);
+        }
+
+        .target-market {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-top: 5rem;
+            padding: 3rem;
+            background: var(--color-surface);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .market-column h4 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-cyan);
+        }
+
+        .market-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .market-list li {
+            padding: 0.8rem 1rem;
+            background: rgba(0, 217, 255, 0.05);
+            border-left: 3px solid var(--color-cyan);
+            font-size: 0.95rem;
+        }
+
+        /* SLIDE 3: USPs */
+        #usps {
+            background: linear-gradient(180deg, rgba(0, 217, 255, 0.03) 0%, transparent 100%);
+        }
+
+        .usps-grid {
+            display: grid;
+            gap: 10rem;
+            margin-top: 5rem;
+        }
+
+        .usp {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6rem;
+            align-items: center;
+            position: relative;
+            margin-bottom: 6rem;
+        }
+
+        .usp:nth-child(2) .usp-content {
+            order: 2;
+        }
+
+        .usp:nth-child(2) .usp-screenshot {
+            order: 1;
+        }
+
+        .usp-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .usp-number {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+            display: block;
+            letter-spacing: 0.1em;
+        }
+
+        .usp-content h3 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--color-accent);
+            line-height: 1.2;
+        }
+
+        .usp-features {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .usp-feature {
+            padding: 1rem 1.5rem;
+            background: rgba(255, 107, 53, 0.05);
+            border-left: 3px solid var(--color-accent);
+            font-size: 0.95rem;
+            color: var(--color-text-dim);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .usp-feature:hover {
+            transform: translateX(5px);
+            background: rgba(255, 107, 53, 0.08);
+        }
+
+        .usp-result {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--color-text);
+            padding: 1.5rem;
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid var(--color-accent);
+            margin-top: 2rem;
+        }
+
+        .usp-result::before {
+            content: '→ ';
+            color: var(--color-accent);
+            margin-right: 0.5rem;
+        }
+
+        /* Screenshot browser mockup */
+        .usp-screenshot {
+            position: relative;
+            z-index: 10;
+        }
+
+        .browser-mockup {
+            background: #1a1f2e;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 107, 53, 0.2);
+            position: relative;
+            z-index: 100;
+            max-width: 100%;
+            isolation: isolate;
+        }
+
+        .browser-header {
+            background: #0f1419;
+            padding: 0.8rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(255, 107, 53, 0.2);
+        }
+
+        .browser-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--color-text-dim);
+            opacity: 0.3;
+        }
+
+        .browser-dot:nth-child(1) { background: #ff6b35; opacity: 0.5; }
+        .browser-dot:nth-child(2) { background: #ffd700; opacity: 0.5; }
+        .browser-dot:nth-child(3) { background: #00d9ff; opacity: 0.5; }
+
+        .browser-content {
+            position: relative;
+            overflow: hidden;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            isolation: isolate;
+        }
+
+        .browser-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: -1;
+        }
+
+        .browser-content img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+            object-position: top center;
+            background: #ffffff;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Decorative accent behind screenshot */
+        .usp-screenshot::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: -30px;
+            right: 30px;
+            bottom: -30px;
+            background: linear-gradient(135deg, var(--color-accent-glow), transparent);
+            border-radius: 8px;
+            z-index: -1;
+        }
+
+        .usp:nth-child(2) .usp-screenshot::before {
+            left: 30px;
+            right: -30px;
+            background: linear-gradient(225deg, var(--color-cyan-glow), transparent);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            margin-top: 8rem;
+            padding: 5rem;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(0, 217, 255, 0.1) 100%);
+            border: 2px solid var(--color-accent);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--color-accent-glow) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .cta-section h3 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+            color: var(--color-text);
+        }
+
+        .cta-section p {
+            font-size: 1.3rem;
+            color: var(--color-text-dim);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1.5rem 4rem;
+            background: var(--color-accent);
+            color: var(--color-bg);
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            z-index: 1;
+            font-family: var(--font-mono);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px var(--color-accent-glow);
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 0;
+            border-top: 1px solid rgba(255, 107, 53, 0.2);
+            margin-top: 8rem;
+            text-align: center;
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 107, 53, 0.1);
+            z-index: 1000;
+        }
+
+        .scroll-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-accent), var(--color-cyan));
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 2rem;
+            }
+
+            section {
+                padding: 4rem 0;
+            }
+
+            h1 {
+                font-size: 3rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .stats-grid,
+            .solution-pillars,
+            .target-market {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .usp {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .usp:nth-child(2) .usp-content,
+            .usp:nth-child(2) .usp-screenshot {
+                order: initial;
+            }
+
+            .usp-content h3 {
+                font-size: 1.8rem;
+            }
+
+            .usp-screenshot::before {
+                display: none;
+            }
+
+            .cta-section {
+                padding: 3rem 2rem;
+            }
+        }
+
+        /* Animation for numbers */
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-number,
+        .consequence-cost {
+            animation: countUp 0.8s ease forwards;
+        }
+
+        /* PDF Page Break Control */
+        @media print {
+            section {
+                page-break-inside: avoid;
+            }
+
+            .stat-card,
+            .usp,
+            .pillar,
+            .consequences,
+            .target-market {
+                page-break-inside: avoid;
+            }
+
+            .browser-mockup {
+                page-break-inside: avoid;
+            }
+
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+
+            .section-label {
+                page-break-after: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-indicator">
+        <div class="scroll-progress" id="scrollProgress"></div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="logo">HACCP//REALTIME</div>
+        </div>
+    </header>
+
+    <!-- SLIDE 1: THE PROBLEM -->
+    <section id="problem">
+        <div class="container">
+            <div class="section-label">01 / The Problem</div>
+            <h1>The Hidden Cost of <span class="highlight">Manual HACCP</span> Compliance</h1>
+
+            <p class="problem-intro">
+                Despite critical importance, HACCP compliance remains manual and fragmented.
+                Monitoring data lives across disconnected systems. Documentation is retrospective.
+                Real-time visibility is limited. Compliance is reactive, not proactive.
+            </p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">30-40%</span>
+                    <div class="stat-label">Time Wasted</div>
+                    <p class="stat-description">
+                        Of quality team time spent on manual record compilation and audit preparation instead of strategic work
+                    </p>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-number">8-72hr</span>
+                    <div class="stat-label">Detection Delays</div>
+                    <p class="stat-description">
+                        Common breach detection delays in manual monitoring environments, extending exposure windows
+                    </p>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-number">14-28d</span>
+                    <div class="stat-label">Audit Preparation</div>
+                    <p class="stat-description">
+                        Days of focused effort required for audit readiness versus on-demand validation
+                    </p>
+                </div>
+            </div>
+
+            <div class="consequences">
+                <h3>Financial Consequences</h3>
+                <div class="consequence-list">
+                    <div class="consequence-item">
+                        <span class="consequence-cost">$250K-$1M+</span>
+                        <p class="consequence-desc">Per preventable incident (recalls, rework, disposal)</p>
+                    </div>
+                    <div class="consequence-item">
+                        <span class="consequence-cost">Certification Loss</span>
+                        <p class="consequence-desc">Market access restricted, customer delistings</p>
+                    </div>
+                    <div class="consequence-item">
+                        <span class="consequence-cost">Brand Damage</span>
+                        <p class="consequence-desc">Customer relationships eroded, competitive disadvantage</p>
+                    </div>
+                    <div class="consequence-item">
+                        <span class="consequence-cost">Scale Constraint</span>
+                        <p class="consequence-desc">Unable to grow operations without proportional overhead</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 2: SOLUTION -->
+    <section id="solution">
+        <div class="container">
+            <div class="section-label">02 / The Solution</div>
+            <h2>Real-Time HACCP Compliance <span class="highlight-cyan">Built for Operations</span></h2>
+
+            <p class="solution-intro">
+                A purpose-built HACCP compliance system that transforms compliance from a reactive,
+                manual function into real-time, automated, and auditable operations. Not a generic
+                compliance tool—a HACCP-specific platform embedded into daily workflows.
+            </p>
+
+            <div class="solution-pillars">
+                <div class="pillar">
+                    <div class="pillar-number">PILLAR 01</div>
+                    <h3>Ensure Compliance</h3>
+                    <ul class="pillar-features">
+                        <li>Real-time digital monitoring of all CCPs</li>
+                        <li>IoT/Sensor integration for automated capture</li>
+                        <li>Immediate breach detection & alerts</li>
+                        <li>Structured corrective action workflows</li>
+                        <li>Auto-generated compliance documentation</li>
+                    </ul>
+                </div>
+
+                <div class="pillar">
+                    <div class="pillar-number">PILLAR 02</div>
+                    <h3>Drive Adoption</h3>
+                    <ul class="pillar-features">
+                        <li>Guided workflows with embedded context</li>
+                        <li>Role-based dashboards & accountability</li>
+                        <li>Automated reminders & scheduling</li>
+                        <li>Real-time performance visibility</li>
+                        <li>Feedback loops & recognition</li>
+                    </ul>
+                </div>
+
+                <div class="pillar">
+                    <div class="pillar-number">PILLAR 03</div>
+                    <h3>Learning & Knowledge Hub</h3>
+                    <ul class="pillar-features">
+                        <li>Built-in compliance knowledge base</li>
+                        <li>Interactive training & onboarding</li>
+                        <li>Performance analytics & insights</li>
+                        <li>Best practices library</li>
+                        <li>Certification support templates</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="target-market">
+                <div class="market-column">
+                    <h4>Target Industries</h4>
+                    <ul class="market-list">
+                        <li>Food & Beverage Manufacturing</li>
+                        <li>Pharmaceuticals & Healthcare</li>
+                        <li>Cosmetics & Personal Care</li>
+                        <li>Nutraceuticals</li>
+                    </ul>
+                </div>
+                <div class="market-column">
+                    <h4>Decision-Makers</h4>
+                    <ul class="market-list">
+                        <li>Quality Directors & Compliance Officers</li>
+                        <li>Facility Managers & Process Managers</li>
+                        <li>Operations Leaders & COOs</li>
+                        <li>Board/Executive Leadership</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 3: USPs -->
+    <section id="usps">
+        <div class="container">
+            <div class="section-label">03 / Unique Value</div>
+            <h2>Why We're <span class="highlight">Different</span></h2>
+
+            <div class="usps-grid">
+                <div class="usp">
+                    <div class="usp-content">
+                        <span class="usp-number">01 / REAL-TIME MONITORING</span>
+                        <h3>Real-Time Monitoring Embedded Into Operations</h3>
+                        <div class="usp-features">
+                            <div class="usp-feature">IoT sensor integration for automated data capture</div>
+                            <div class="usp-feature">Immediate breach alerts (minutes, not hours)</div>
+                            <div class="usp-feature">Self-documenting compliance system</div>
+                            <div class="usp-feature">Data captured as operations happen, not after the fact</div>
+                        </div>
+                        <div class="usp-result">Compliance confidence, not compliance surprises</div>
+                    </div>
+                    <div class="usp-screenshot">
+                        <div class="browser-mockup">
+                            <div class="browser-header">
+                                <div class="browser-dot"></div>
+                                <div class="browser-dot"></div>
+                                <div class="browser-dot"></div>
+                            </div>
+                            <div class="browser-content">
+                                <img src="dashboard.png" alt="HACCP Dashboard - Real-time compliance monitoring">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="usp">
+                    <div class="usp-content">
+                        <span class="usp-number">02 / GUIDED WORKFLOWS</span>
+                        <h3>Staff Adoption Through Guided Workflows</h3>
+                        <div class="usp-features">
+                            <div class="usp-feature">Embedded context & understanding (why, not just what)</div>
+                            <div class="usp-feature">Role-based accountability & visibility</div>
+                            <div class="usp-feature">Cultural shift from burden to ownership</div>
+                            <div class="usp-feature">95%+ task completion rate vs. 70-80% in manual systems</div>
+                        </div>
+                        <div class="usp-result">Team ownership, not compliance fatigue</div>
+                    </div>
+                    <div class="usp-screenshot">
+                        <div class="browser-mockup">
+                            <div class="browser-header">
+                                <div class="browser-dot"></div>
+                                <div class="browser-dot"></div>
+                                <div class="browser-dot"></div>
+                            </div>
+                            <div class="browser-content">
+                                <img src="guided-forms.png" alt="Guided Forms - CCP monitoring with visual feedback">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="usp">
+                    <div class="usp-content">
+                        <span class="usp-number">03 / SCALABILITY</span>
+                        <h3>Scalability Without Cost Multiplication</h3>
+                        <div class="usp-features">
+                            <div class="usp-feature">Automated monitoring reduces manual labor</div>
+                            <div class="usp-feature">Same rigor across 1 or 5 facilities</div>
+                            <div class="usp-feature">Knowledge hub scales organization-wide</div>
+                            <div class="usp-feature">Enable growth without compliance bottleneck</div>
+                        </div>
+                        <div class="usp-result">Operations scale, compliance costs don't</div>
+                    </div>
+                    <div class="usp-screenshot">
+                        <div class="browser-mockup">
+                            <div class="browser-header">
+                                <div class="browser-dot"></div>
+                                <div class="browser-dot"></div>
+                                <div class="browser-dot"></div>
+                            </div>
+                            <div class="browser-content">
+                                <img src="task-management.png" alt="Task Management - Scalable workflow tracking">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <h3>From Reactive to Real-Time</h3>
+                <p>Compliance confidence. Audit readiness. Operational excellence.</p>
+                <a href="#contact" class="cta-button">Start Conversation</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 HACCP Compliance Platform. Real-time operations for modern manufacturing.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll progress indicator
+        window.addEventListener('scroll', () => {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (window.scrollY / scrollHeight) * 100;
+            scrollProgress.style.width = scrolled + '%';
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.stat-card, .pillar, .usp, .browser-mockup').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

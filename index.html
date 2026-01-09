@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HACCP Compliance Platform - Real-Time Operations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --color-bg: #0a0f1a;
@@ -15,7 +18,7 @@
             --color-accent-glow: rgba(255, 107, 53, 0.2);
             --color-cyan: #00d9ff;
             --color-cyan-glow: rgba(0, 217, 255, 0.15);
-            --font-display: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --font-display: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-mono: Monaco, 'Courier New', monospace;
         }
 
@@ -63,12 +66,29 @@
             border-bottom: 1px solid rgba(255, 107, 53, 0.2);
         }
 
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .logo {
             font-size: 1.5rem;
             font-weight: 800;
             letter-spacing: -0.02em;
             color: var(--color-accent);
             font-family: var(--font-mono);
+        }
+
+        .logo-image {
+            height: 50px;
+            width: auto;
+            opacity: 0.95;
+            transition: opacity 0.3s ease;
+        }
+
+        .logo-image:hover {
+            opacity: 1;
         }
 
         /* Section base styles */
@@ -591,6 +611,18 @@
             box-shadow: 0 10px 40px var(--color-accent-glow);
         }
 
+        .whatsapp-link {
+            color: var(--color-cyan);
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .whatsapp-link:hover {
+            border-bottom-color: var(--color-cyan);
+        }
+
         /* Footer */
         footer {
             padding: 4rem 0;
@@ -623,6 +655,21 @@
         @media (max-width: 768px) {
             .container {
                 padding: 0 2rem;
+            }
+
+            .header-content {
+                flex-direction: column-reverse;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .logo-image {
+                height: 40px;
+                align-self: flex-start;
             }
 
             section {
@@ -719,7 +766,10 @@
 
     <header>
         <div class="container">
-            <div class="logo">HACCP//REALTIME</div>
+            <div class="header-content">
+                <div class="logo">HACCP//REALTIME</div>
+                <img src="Logo_Full_white.png" alt="Logo" class="logo-image">
+            </div>
         </div>
     </header>
 
@@ -947,14 +997,18 @@
             <div class="cta-section">
                 <h3>From Reactive to Real-Time</h3>
                 <p>Compliance confidence. Audit readiness. Operational excellence.</p>
-                <a href="#contact" class="cta-button">Start Conversation</a>
+                <p>Contact or Whatsapp <a href="https://wa.me/94777880390" target="_blank" class="whatsapp-link">+94 77 788 0390</a>  to schedule a demo.</p>
+                <a href="mailto:info@neuralnexus.lk" class="cta-button">Email Us</a>
+                <p style="margin-top: 1.5rem; font-family: var(--font-mono); font-size: 1.1rem; color: var(--color-cyan);">info@neuralnexus.lk</p>
             </div>
         </div>
     </section>
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 HACCP Compliance Platform. Real-time operations for modern manufacturing.</p>
+            <p>&copy; 2026 NeuralNexus. All rights reserved. | Building the future with intelligent systems.
+
+                .</p>
         </div>
     </footer>
 

@@ -1,0 +1,32 @@
+{
+  "src": "safetrack-general-brochure.html",
+  "out": "safetrack-general-brochure-print.html",
+  "heights": "print-heights.json",
+  "design_width": 1120,
+  "page": {
+    "size": "A4 portrait",
+    "width_mm": 210,
+    "height_mm": 297,
+    "head_mm": 13,
+    "foot_mm": 11
+  },
+  "stack_pad": 0,
+  "gap": 0,
+  "tight_gap": 0,
+  "max_extra_gap": 0,
+  "top_share": 0,
+  "safety_px": 12,
+  "containers": [
+    "main"
+  ],
+  "unwrap": [],
+  "skip": [],
+  "cover": [
+    "s1.0"
+  ],
+  "tight": [],
+  "keep_with_next_classes": [],
+  "css_file": "print-overrides.css",
+  "header_html": "<span class=\"pg-brand\">SafeTrack</span><span class=\"pg-meta\">Product Brochure &nbsp;&middot;&nbsp; neuralnexus.lk</span>",
+  "footer_html": "<span>NeuralNexus &nbsp;&middot;&nbsp; info@neuralnexus.lk</span><span class=\"pg-foot-num\">{page} / {total}</span>"
+}

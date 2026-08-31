@@ -1,0 +1,60 @@
+    /* ── SafeTrack brochure: print-variant overrides ──
+       Blocks here are whole <section> elements, which carry their own
+       padding and background, so the page block wrapper adds none. */
+    .pg-block { padding: 0; }
+
+    /* Everything scales down to the sheet, so type is set larger than the
+       web version to land at a comfortable printed size. */
+    html { font-size: 19px; }
+    body { font-size: 19px; }
+
+    /* Fluid type resolves against the page, not the design width, so it is
+       pinned to the value it would take on a wide viewport. */
+    h1 { font-size: 44px; }
+    .facts-heading, .stages-heading, .breach-heading,
+    .lms-heading, .features-heading, .timeline-heading { font-size: 30px; }
+    .cta-headline { font-size: 44px; }
+    .lms-headline { font-size: 26px; }
+    .breach-headline { font-size: 24px; }
+    .cta-subline { font-size: 36px; }
+
+    /* Running header and footer furniture. */
+    .pg-head { border-bottom: 1px solid var(--border); }
+    .pg-foot { border-top: 1px solid var(--border); }
+    .pg-brand { font-size: 3.1mm; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+    .pg-meta, .pg-foot { font-size: 2.6mm; color: var(--text-muted); }
+    .pg-foot-num { font-weight: 700; color: var(--text-secondary); }
+
+    /* Cover page. */
+    .page.cover .pg-body { background: #fff; }
+
+    /* Belt and braces if anything ever does reflow. */
+    section, .facts-stat, .stage-card, .feature-card, .pricing-card,
+    .timeline-step, .lms-inner, .breach-inner { break-inside: avoid; page-break-inside: avoid; }
+
+    /* ── Fill layout ──
+       Blocks here are full-bleed sections with their own background, so
+       leftover page height is absorbed by stretching the sections rather
+       than left as gaps, which would read as white stripes between bands.
+       1456px is the content well height in design px (well height / scale). */
+    .page:not(.cover) .pg-stack { height: var(--pg-well); }
+    .page:not(.cover) .pg-block { flex: 1 1 auto; display: flex; flex-direction: column; }
+    /* Only the outer sizing is touched. Overriding the section's own display
+       would rewrite its internal grid and blow its images up. */
+    .page:not(.cover) .pg-block > section { flex: 1 1 auto; }
+
+    /* ── Cover typography ──
+       The web hero caps its prose at 600px for a wide viewport, which leaves
+       half the sheet empty. Sized here to the printed measure instead. */
+    .page.cover h1 { font-size: 68px; line-height: 1.08; letter-spacing: -0.025em; }
+    .page.cover .hero-subline { max-width: 900px; font-size: 1.15rem; line-height: 1.6; }
+    .page.cover .eyebrow { font-size: 0.85rem; letter-spacing: 0.18em; }
+    .page.cover .coral-rule { width: 110px; height: 5px; }
+
+    /* Centre a section within its band when it wraps its content in a single
+       child, which is safe: the wrapper keeps its own display mode and only
+       its outer placement changes. Multi-child sections are left alone. */
+    .page:not(.cover) .pg-block > section:has(> *:only-child),
+    .page:not(.cover) .pg-block > .cta-section {
+      display: flex; flex-direction: column; justify-content: center;
+    }

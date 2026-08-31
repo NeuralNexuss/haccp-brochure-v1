@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HACCPコンプライアンス・プラットフォーム - リアルタイム運用管理</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 和モダン (Wa-Modern) Design System - Japanese B2B Aesthetic */
+        :root {
+            /* Japanese Color Palette - 調和 (Harmony) */
+            --indigo-primary: #1e3a5f;
+            --indigo-dark: #0f1f3a;
+            --indigo-light: #2c5282;
+            --vermillion: #e63946;
+            --vermillion-light: #ff6b6b;
+            --gold: #d4af37;
+            --gold-light: #f59e0b;
+
+            /* Neutrals - 間 (Ma) - Negative Space */
+            --ivory: #fafbfc;
+            --cream: #f5f7fa;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #64748b;
+            --gray-800: #334155;
+            --charcoal: #1a1a1a;
+
+            /* Japanese Typography */
+            --font-japanese: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'YuGothic', 'Meiryo', 'Noto Sans JP', sans-serif;
+            --font-serif: 'Noto Serif JP', 'Hiragino Mincho ProN', 'Yu Mincho', 'YuMincho', serif;
+            --font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+
+            /* Spacing - 1.5x Western for Ma (breathing room) */
+            --space-xs: 8px;
+            --space-sm: 12px;
+            --space-md: 24px;
+            --space-lg: 36px;
+            --space-xl: 48px;
+            --space-2xl: 72px;
+            --space-3xl: 96px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-japanese);
+            background: var(--ivory);
+            color: var(--gray-800);
+            line-height: 1.85;
+            overflow-x: hidden;
+            font-size: 16px;
+            letter-spacing: 0.02em;
+            line-break: strict;
+            overflow-wrap: break-word;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Japanese text handling - 簡素 (Simplicity) */
+        h1, h2, h3, h4 {
+            word-break: auto-phrase;
+            text-wrap: balance;
+            line-break: strict;
+            overflow-wrap: break-word;
+            font-family: var(--font-japanese);
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
+        .nowrap {
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Subtle grain texture - Washi paper inspiration */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(30, 58, 95, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--space-2xl);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Header - 簡素 (Clean precision) */
+        header {
+            padding: var(--space-xl) 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            color: var(--indigo-primary);
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+        }
+
+        .logo-image {
+            height: 45px;
+            width: auto;
+            opacity: 0.9;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .logo-image:hover {
+            opacity: 1;
+        }
+
+        /* Section styling - 間 (Ma) breathing space */
+        section {
+            padding: var(--space-3xl) 0;
+            position: relative;
+        }
+
+        /* Gentle fade-in animations */
+        @keyframes fadeInGentle {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Section labels - refined minimal */
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--vermillion);
+            margin-bottom: var(--space-lg);
+            display: inline-block;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--vermillion);
+        }
+
+        /* Typography - Japanese readability */
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: var(--space-xl);
+            color: var(--indigo-primary);
+            line-height: 1.4;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            margin-bottom: var(--space-xl);
+            color: var(--indigo-primary);
+            line-height: 1.4;
+            font-weight: 700;
+        }
+
+        h3 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            line-height: 1.5;
+            color: var(--indigo-dark);
+        }
+
+        .highlight {
+            color: var(--vermillion);
+            position: relative;
+        }
+
+        .highlight-gold {
+            color: var(--gold);
+        }
+
+        /* SECTION 1: PROBLEM - 現状の課題 */
+        #problem {
+            background: var(--ivory);
+        }
+
+        .problem-intro {
+            font-size: 1.125rem;
+            font-weight: 300;
+            max-width: 850px;
+            margin-bottom: var(--space-3xl);
+            color: var(--gray-600);
+            line-height: 2;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-xl);
+            margin-bottom: var(--space-3xl);
+        }
+
+        /* Card design - 調和 (Harmony) subtle elegance */
+        .stat-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--vermillion) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-color: var(--vermillion);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-number {
+            font-family: var(--font-mono);
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--vermillion);
+            margin-bottom: var(--space-md);
+            display: block;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--indigo-primary);
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+        }
+
+        .stat-description {
+            font-size: 0.9375rem;
+            color: var(--gray-600);
+            line-height: 1.8;
+        }
+
+        /* Consequences section */
+        .consequences {
+            background: linear-gradient(135deg, rgba(230, 57, 70, 0.03) 0%, transparent 100%);
+            border-left: 3px solid var(--vermillion);
+            border-radius: 0 8px 8px 0;
+            padding: var(--space-xl);
+            margin-top: var(--space-3xl);
+        }
+
+        .consequences h3 {
+            font-size: 1.75rem;
+            margin-bottom: var(--space-lg);
+            color: var(--vermillion);
+        }
+
+        .consequence-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .consequence-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .consequence-cost {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .consequence-desc {
+            color: var(--gray-600);
+            font-size: 0.9375rem;
+            line-height: 1.7;
+        }
+
+        /* SECTION 2: SOLUTION - ソリューション */
+        #solution {
+            background: white;
+        }
+
+        .solution-intro {
+            max-width: 850px;
+            font-size: 1.0625rem;
+            margin-bottom: var(--space-3xl);
+            line-height: 2;
+            color: var(--gray-600);
+        }
+
+        .solution-pillars {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-3xl);
+        }
+
+        .pillar {
+            position: relative;
+            padding: var(--space-xl);
+            background: var(--gray-50);
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pillar:hover {
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .pillar-number {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--gold);
+            margin-bottom: var(--space-md);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .pillar h3 {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-lg);
+            color: var(--indigo-primary);
+            line-height: 1.5;
+        }
+
+        .pillar-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .pillar-features li {
+            padding-left: var(--space-lg);
+            position: relative;
+            color: var(--gray-600);
+            line-height: 1.8;
+        }
+
+        .pillar-features li::before {
+            content: '●';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-size: 0.5rem;
+            top: 0.6em;
+        }
+
+        /* Target market section */
+        .target-market {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2xl);
+            margin-top: var(--space-3xl);
+            padding: var(--space-xl);
+            background: var(--indigo-primary);
+            color: white;
+            border-radius: 8px;
+        }
+
+        .market-column h4 {
+            font-size: 1.25rem;
+            margin-bottom: var(--space-lg);
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .market-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .market-list li {
+            padding: var(--space-md);
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 2px solid var(--gold);
+            font-size: 0.9375rem;
+            border-radius: 0 4px 4px 0;
+            line-height: 1.7;
+        }
+
+        /* SECTION 3: USPs - 独自の価値 */
+        #usps {
+            background: var(--gray-50);
+        }
+
+        .usps-grid {
+            display: grid;
+            gap: var(--space-3xl);
+            margin-top: var(--space-3xl);
+        }
+
+        .usp {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2xl);
+            align-items: center;
+            padding: var(--space-2xl);
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .usp:nth-child(2) .usp-content {
+            order: 2;
+        }
+
+        .usp:nth-child(2) .usp-screenshot {
+            order: 1;
+        }
+
+        .usp-content {
+            padding: var(--space-lg);
+        }
+
+        .usp-number {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--vermillion);
+            margin-bottom: var(--space-md);
+            display: block;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .usp-content h3 {
+            font-size: 1.875rem;
+            margin-bottom: var(--space-lg);
+            color: var(--indigo-primary);
+            line-height: 1.5;
+        }
+
+        .usp-features {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .usp-feature {
+            padding: var(--space-md) var(--space-lg);
+            background: var(--gray-50);
+            border-left: 3px solid var(--gold);
+            font-size: 0.9375rem;
+            color: var(--gray-600);
+            line-height: 1.8;
+            border-radius: 0 6px 6px 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .usp-feature:hover {
+            transform: translateX(4px);
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .usp-result {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--indigo-primary);
+            padding: var(--space-lg);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, transparent 100%);
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            margin-top: var(--space-lg);
+        }
+
+        .usp-result::before {
+            content: '→ ';
+            color: var(--gold);
+            margin-right: 0.5rem;
+        }
+
+        /* Screenshot styling - refined */
+        .usp-screenshot {
+            position: relative;
+        }
+
+        .browser-mockup {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--gray-200);
+        }
+
+        .browser-header {
+            background: var(--gray-100);
+            padding: var(--space-sm) var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .browser-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--gray-300);
+        }
+
+        .browser-dot:nth-child(1) { background: #ff6b6b; }
+        .browser-dot:nth-child(2) { background: #ffd93d; }
+        .browser-dot:nth-child(3) { background: #6bcf7f; }
+
+        .browser-content {
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .browser-content img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* CTA Section - 調和 (Harmony) */
+        .cta-section {
+            margin-top: var(--space-3xl);
+            padding: var(--space-3xl);
+            background: linear-gradient(135deg, var(--indigo-primary) 0%, var(--indigo-dark) 100%);
+            color: white;
+            text-align: center;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta-logo {
+            width: 280px;
+            height: auto;
+            margin: 0 auto var(--space-lg);
+            display: block;
+            opacity: 0.95;
+            filter: brightness(1.1);
+        }
+
+        .cta-section h3 {
+            font-size: 2.25rem;
+            margin-bottom: var(--space-md);
+            color: white;
+            position: relative;
+        }
+
+        .cta-section p {
+            font-size: 1.0625rem;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 700px;
+            margin: 0 auto var(--space-xl);
+            line-height: 1.9;
+            position: relative;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: var(--space-lg);
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: var(--space-lg);
+            position: relative;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: var(--space-md) var(--space-2xl);
+            background: var(--vermillion);
+            color: white;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 6px;
+            font-family: var(--font-japanese);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(230, 57, 70, 0.3);
+            background: var(--vermillion-light);
+        }
+
+        .cta-button.secondary {
+            background: transparent;
+            color: var(--gold);
+            border: 2px solid var(--gold);
+        }
+
+        .cta-button.secondary:hover {
+            background: rgba(212, 175, 55, 0.1);
+            box-shadow: 0 8px 16px rgba(212, 175, 55, 0.2);
+        }
+
+        .whatsapp-link {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .whatsapp-link:hover {
+            border-bottom-color: var(--gold);
+        }
+
+        /* Footer - 簡素 (Simplicity) */
+        footer {
+            padding: var(--space-2xl) 0;
+            border-top: 1px solid var(--gray-200);
+            margin-top: var(--space-3xl);
+            text-align: center;
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            background: white;
+        }
+
+        /* Scroll progress indicator - subtle */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gray-200);
+            z-index: 1000;
+        }
+
+        .scroll-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--vermillion), var(--gold));
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        /* Responsive - Tablet */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 0 var(--space-xl);
+            }
+
+            h1 { font-size: 3rem; }
+            h2 { font-size: 2.5rem; }
+
+            .stats-grid,
+            .solution-pillars {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .usp {
+                grid-template-columns: 1fr;
+                gap: var(--space-xl);
+            }
+
+            .usp:nth-child(2) .usp-content,
+            .usp:nth-child(2) .usp-screenshot {
+                order: initial;
+            }
+        }
+
+        /* Responsive - Mobile */
+        @media (max-width: 768px) {
+            :root {
+                --space-xl: 32px;
+                --space-2xl: 48px;
+                --space-3xl: 64px;
+            }
+
+            .container {
+                padding: 0 var(--space-md);
+            }
+
+            header {
+                padding: var(--space-lg) 0;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: var(--space-md);
+                align-items: flex-start;
+            }
+
+            .logo-image {
+                height: 35px;
+            }
+
+            section {
+                padding: var(--space-2xl) 0;
+            }
+
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.75rem; }
+
+            .stats-grid,
+            .solution-pillars,
+            .target-market,
+            .consequence-list {
+                grid-template-columns: 1fr;
+                gap: var(--space-lg);
+            }
+
+            .stat-card,
+            .pillar,
+            .consequences {
+                padding: var(--space-lg);
+            }
+
+            .usp {
+                padding: var(--space-lg);
+                gap: var(--space-lg);
+            }
+
+            .cta-section {
+                padding: var(--space-2xl) var(--space-lg);
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+
+            .cta-button {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .cta-logo {
+                width: 200px;
+            }
+        }
+
+        /* Responsive - Small Mobile */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 var(--space-md);
+            }
+
+            h1 { font-size: 1.75rem; }
+            h2 { font-size: 1.5rem; }
+
+            .stat-number { font-size: 2.5rem; }
+            .consequence-cost { font-size: 1.25rem; }
+
+            .usp-content h3 { font-size: 1.5rem; }
+
+            .cta-section h3 { font-size: 1.75rem; }
+            .cta-logo { width: 160px; }
+        }
+
+        /* Print styles */
+        @media print {
+            section {
+                page-break-inside: avoid;
+            }
+
+            .stat-card,
+            .usp,
+            .pillar,
+            .consequences,
+            .target-market {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-indicator">
+        <div class="scroll-progress" id="scrollProgress"></div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">HACCP / REALTIME</div>
+                <img src="Logo_Full_white.png" alt="ロゴ" class="logo-image">
+            </div>
+        </div>
+    </header>
+
+    <!-- SECTION 1: 現状の課題 -->
+    <section id="problem">
+        <div class="container">
+            <div class="section-label">01 / 現状の課題</div>
+            <h1><span class="nowrap">手作業HACCP</span>管理の<span class="highlight">見えない<span class="nowrap">コスト</span></span></h1>
+
+            <p class="problem-intro">
+                <span class="nowrap">HACCP</span><span class="nowrap">コンプライアンス</span>は重要であるにもかかわらず、多くの企業では手作業による管理が続いています。<span class="nowrap">モニタリング</span>データは分散した<span class="nowrap">システム</span>に保存され、記録は事後的です。<span class="nowrap">リアルタイム</span>の可視化は限定的で、<span class="nowrap">コンプライアンス</span>対応は後手に回りがちです。
+            </p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">30-40%</span>
+                    <div class="stat-label">時間の浪費</div>
+                    <p class="stat-description">
+                        品質チームの時間が手作業による記録作成や監査準備に費やされ、戦略的な業務に集中できない状況
+                    </p>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-number">8-72時間</span>
+                    <div class="stat-label">検知の遅れ</div>
+                    <p class="stat-description">
+                        手作業による<span class="nowrap">モニタリング</span>環境では、違反検知に8〜72時間の遅れが生じ、<span class="nowrap">リスク</span>が拡大
+                    </p>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-number">14-28日</span>
+                    <div class="stat-label">監査準備期間</div>
+                    <p class="stat-description">
+                        監査対応のために14〜28日間の集中作業が必要で、<span class="nowrap">オンデマンド</span>での対応が困難
+                    </p>
+                </div>
+            </div>
+
+            <div class="consequences">
+                <h3>経済的な影響</h3>
+                <div class="consequence-list">
+                    <div class="consequence-item">
+                        <span class="consequence-cost">¥3,500万〜1.4億円+</span>
+                        <p class="consequence-desc">防止可能な<span class="nowrap">インシデント</span>1件あたり（回収、再加工、廃棄費用）</p>
+                    </div>
+                    <div class="consequence-item">
+                        <span class="consequence-cost">認証の喪失</span>
+                        <p class="consequence-desc">市場<span class="nowrap">アクセス</span>の制限、顧客からの取引停止</p>
+                    </div>
+                    <div class="consequence-item">
+                        <span class="consequence-cost"><span class="nowrap">ブランド</span>毀損</span>
+                        <p class="consequence-desc">顧客関係の悪化、競争上の不利</p>
+                    </div>
+                    <div class="consequence-item">
+                        <span class="consequence-cost">成長の制約</span>
+                        <p class="consequence-desc">運用規模の拡大に比例して管理負荷が増大</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: ソリューション -->
+    <section id="solution">
+        <div class="container">
+            <div class="section-label">02 / <span class="nowrap">ソリューション</span></div>
+            <h2><span class="nowrap">リアルタイム</span><span class="nowrap">HACCP</span><span class="nowrap">コンプライアンス</span> <span class="highlight-gold">運用に最適化された<span class="nowrap">プラットフォーム</span></span></h2>
+
+            <p class="solution-intro">
+                <span class="nowrap">HACCP</span>専用に設計された<span class="nowrap">コンプライアンス・システム</span>です。<span class="nowrap">コンプライアンス</span>を事後的・手作業の機能から、<span class="nowrap">リアルタイム</span>で自動化された監査可能な運用へと進化させます。汎用的な<span class="nowrap">コンプライアンス</span>ツールではなく、<span class="nowrap">HACCP</span>に特化し、日常の<span class="nowrap">ワークフロー</span>に組み込まれた<span class="nowrap">プラットフォーム</span>を提供します。
+            </p>
+
+            <div class="solution-pillars">
+                <div class="pillar">
+                    <div class="pillar-number">PILLAR 01</div>
+                    <h3><span class="nowrap">コンプライアンス</span>確保</h3>
+                    <ul class="pillar-features">
+                        <li>すべての<span class="nowrap">CCP</span>の<span class="nowrap">リアルタイム</span>デジタル<span class="nowrap">モニタリング</span></li>
+                        <li><span class="nowrap">IoT/センサー</span>統合による自動データ取得</li>
+                        <li>即時の違反検知と<span class="nowrap">アラート</span>発信</li>
+                        <li>構造化された是正措置<span class="nowrap">ワークフロー</span></li>
+                        <li><span class="nowrap">コンプライアンス</span>文書の自動生成</li>
+                    </ul>
+                </div>
+
+                <div class="pillar">
+                    <div class="pillar-number">PILLAR 02</div>
+                    <h3>組織への浸透</h3>
+                    <ul class="pillar-features">
+                        <li>理解を促す<span class="nowrap">ガイド付きワークフロー</span></li>
+                        <li>役割別<span class="nowrap">ダッシュボード</span>と責任の明確化</li>
+                        <li>自動<span class="nowrap">リマインダー</span>と<span class="nowrap">スケジューリング</span></li>
+                        <li><span class="nowrap">リアルタイム</span>の<span class="nowrap">パフォーマンス</span>可視化</li>
+                        <li><span class="nowrap">フィードバックループ</span>と評価機能</li>
+                    </ul>
+                </div>
+
+                <div class="pillar">
+                    <div class="pillar-number">PILLAR 03</div>
+                    <h3>学習と<span class="nowrap">ナレッジハブ</span></h3>
+                    <ul class="pillar-features">
+                        <li>組み込み型<span class="nowrap">コンプライアンス</span>知識<span class="nowrap">ベース</span></li>
+                        <li><span class="nowrap">インタラクティブ</span>な研修と<span class="nowrap">オンボーディング</span></li>
+                        <li><span class="nowrap">パフォーマンス</span>分析と<span class="nowrap">インサイト</span></li>
+                        <li><span class="nowrap">ベストプラクティス</span><span class="nowrap">ライブラリ</span></li>
+                        <li>認証取得支援<span class="nowrap">テンプレート</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="target-market">
+                <div class="market-column">
+                    <h4>対象業界</h4>
+                    <ul class="market-list">
+                        <li>食品・飲料製造業</li>
+                        <li>医薬品・<span class="nowrap">ヘルスケア</span></li>
+                        <li>化粧品・<span class="nowrap">パーソナルケア</span></li>
+                        <li><span class="nowrap">ニュートラシューティカルズ</span></li>
+                    </ul>
+                </div>
+                <div class="market-column">
+                    <h4>意思決定者</h4>
+                    <ul class="market-list">
+                        <li>品質管理責任者・<span class="nowrap">コンプライアンス</span>担当役員</li>
+                        <li>施設管理者・<span class="nowrap">プロセス</span>管理者</li>
+                        <li><span class="nowrap">オペレーション</span>責任者・<span class="nowrap">COO</span></li>
+                        <li>取締役会・経営層</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: 独自の価値 -->
+    <section id="usps">
+        <div class="container">
+            <div class="section-label">03 / 独自の価値</div>
+            <h2>選ばれる<span class="highlight">理由</span></h2>
+
+            <div class="usps-grid">
+                <div class="usp">
+                    <div class="usp-content">
+                        <span class="usp-number">01 / <span class="nowrap">IoT連携モニタリング</span></span>
+                        <h3><span class="nowrap">センサー</span>が監視。<span class="nowrap">プラットフォーム</span>が自動対応。</h3>
+                        <div class="usp-features">
+                            <div class="usp-feature">温度、湿度、圧力<span class="nowrap">センサー</span>を接続 — <span class="nowrap">ポーリング</span>間隔は設定可能（5分、15分、1時間）、24時間365日稼働</div>
+                            <div class="usp-feature">すべての測定値で限界値を自動チェック — 違反が発生した瞬間に検知</div>
+                            <div class="usp-feature">是正措置<span class="nowrap">フォーム</span>を自動作成し<span class="nowrap">ワークフロー</span>に送信 — 人的介入は不要</div>
+                            <div class="usp-feature">24時間の<span class="nowrap">トレンド</span>グラフに限界線を表示 — 測定値の推移を正確に把握</div>
+                        </div>
+                        <div class="usp-result"><span class="nowrap">センサー</span>測定から是正措置まで — 完全自動化を実現</div>
+                    </div>
+                    <div class="usp-screenshot" style="position: relative;">
+                        <img src="iot-temperature-graph.png" alt="24時間温度トレンドと違反検知限界線" style="width: 100%; height: auto; display: block; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <!-- Sensor device floating beside the screenshot -->
+                        <div style="position: absolute; bottom: 20px; right: -70px; z-index: 3; cursor: pointer; filter: drop-shadow(0 8px 20px rgba(30, 58, 95, 0.25));" title="すべての製品画像は説明目的のみで使用されています。表示されている商標やブランドはそれぞれの所有者に帰属し、提携や推奨を意味するものではありません。">
+                            <img src="sensor.png" alt="IoT温度センサー" style="width: 200px; height: 200px; object-fit: contain;">
+                        </div>
+                        <p style="font-size: 0.65rem; color: var(--gray-600); opacity: 0.6; font-style: italic; margin-top: var(--space-lg); text-align: center;">
+                            すべての製品画像は説明目的のみで使用されています。表示されているブランドはそれぞれの所有者に帰属し、提携や推奨を意味するものではありません。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="usp">
+                    <div class="usp-content">
+                        <span class="usp-number">02 / <span class="nowrap">ガイド付きワークフロー</span></span>
+                        <h3><span class="nowrap">ガイド付きワークフロー</span>で現場の定着を促進</h3>
+                        <div class="usp-features">
+                            <div class="usp-feature">理解を促す<span class="nowrap">コンテキスト</span>の提供（何をするかではなく、なぜするか）</div>
+                            <div class="usp-feature">役割別の責任と可視性</div>
+                            <div class="usp-feature">負担から主体的な取り組みへの文化転換</div>
+                            <div class="usp-feature"><span class="nowrap">タスク</span>完了率95%以上を達成（手作業<span class="nowrap">システム</span>では70-80%）</div>
+                        </div>
+                        <div class="usp-result">チーム全体の主体性を実現、<span class="nowrap">コンプライアンス</span>疲労を解消</div>
+                    </div>
+                    <div class="usp-screenshot">
+                        <div class="browser-mockup">
+                            <div class="browser-header">
+                                <div class="browser-dot"></div>
+                                <div class="browser-dot"></div>
+                                <div class="browser-dot"></div>
+                            </div>
+                            <div class="browser-content">
+                                <img src="guided-forms.png" alt="ガイド付きフォーム - 視覚的フィードバック付きCCPモニタリング">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="usp">
+                    <div class="usp-content">
+                        <span class="usp-number">03 / <span class="nowrap">スケーラビリティ</span></span>
+                        <h3><span class="nowrap">コスト</span>増加なしで拡張可能</h3>
+                        <div class="usp-features">
+                            <div class="usp-feature">自動<span class="nowrap">モニタリング</span>により手作業を削減</div>
+                            <div class="usp-feature">1施設でも5施設でも同じ品質水準を維持</div>
+                            <div class="usp-feature"><span class="nowrap">ナレッジハブ</span>は組織全体で共有可能</div>
+                            <div class="usp-feature"><span class="nowrap">コンプライアンス</span>が成長の<span class="nowrap">ボトルネック</span>にならない</div>
+                        </div>
+                        <div class="usp-result">運用は拡大しても、<span class="nowrap">コンプライアンス・コスト</span>は増えない</div>
+                    </div>
+                    <div class="usp-screenshot">
+                        <div class="browser-mockup">
+                            <div class="browser-header">
+                                <div class="browser-dot"></div>
+                                <div class="browser-dot"></div>
+                                <div class="browser-dot"></div>
+                            </div>
+                            <div class="browser-content">
+                                <img src="task-management.png" alt="タスク管理 - 拡張可能なワークフロー追跡">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <img src="Logo_Horizontal_Full_White.png" alt="NeuralNexusロゴ" class="cta-logo">
+                <h3>事後対応から<span class="nowrap">リアルタイム</span>へ</h3>
+                <p><span class="nowrap">コンプライアンス</span>の確信。監査への即応性。卓越した運用。</p>
+                <p><span class="nowrap">デモ</span>のご依頼は<span class="nowrap">WhatsApp</span> <a href="https://wa.me/94777880390" target="_blank" class="whatsapp-link">+94 77 788 0390</a> または以下よりお問い合わせください。</p>
+                <div class="cta-buttons">
+                    <a href="mailto:info@neuralnexus.lk?subject=デモのご依頼" class="cta-button"><span class="nowrap">デモ</span>のご依頼</a>
+                    <a href="https://wa.me/94777880390" target="_blank" class="cta-button secondary">お問い合わせ</a>
+                </div>
+                <p style="margin-top: var(--space-lg); font-family: var(--font-mono); font-size: 0.9375rem; color: var(--gold);">info@neuralnexus.lk</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 NeuralNexus. All rights reserved. | <span class="nowrap">インテリジェント・システム</span>で未来を創造</p>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll progress indicator
+        window.addEventListener('scroll', () => {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (window.scrollY / scrollHeight) * 100;
+            scrollProgress.style.width = scrolled + '%';
+        });
+
+        // Gentle intersection observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInGentle 0.6s ease forwards';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.stat-card, .pillar, .usp').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

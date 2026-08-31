@@ -1,0 +1,1405 @@
+#!/usr/bin/env python3
+"""Build safetrack-hellenic-proposal-v2-clean.html using local image files."""
+
+DEST = "safetrack-hellenic-proposal-v2-clean.html"
+
+# Image paths (relative to the output file — all in the same folder)
+LOGO             = "Logo_Horizontal_Full_White.png"
+BREACH_GRAPH     = "iot-temperature-graph.png"
+DEVICE_MOCKUP    = "sensor.png"
+LMS_SCREENSHOT   = "lms-form-preview.png"
+
+HTML = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SafeTrack food-safety compliance platform — HACCP digital monitoring, IoT sensors, automated alerting, and staff training. Confidential proposal for The Hellenic Club, Canberra.">
+    <meta name="author" content="NeuralNexus">
+    <title>SafeTrack — The Hellenic Club Proposal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ─── Design Tokens ─────────────────────────────────────── */
+        :root {{
+            --primary:        #FF6B6B;
+            --primary-hover:  #FF5252;
+            --secondary:      #007AFF;
+            --bg:             #FFFFFF;
+            --bg-alt:         #F9FAFB;
+            --text:           #171717;
+            --text-secondary: #525252;
+            --text-muted:     #A3A3A3;
+            --border:         #E5E5E5;
+            --radius-card:    24px;
+            --radius-pill:    980px;
+            --ease-out:       cubic-bezier(0.16, 1, 0.3, 1);
+            --padding-h:      48px;
+        }}
+
+        /* ─── Reset ─────────────────────────────────────────────── */
+        *, *::before, *::after {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html {{ overflow-x: hidden; }}
+        body {{
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }}
+        img {{ max-width: 100%; height: auto; display: block; }}
+
+        /* ─── Accessibility ─────────────────────────────────────── */
+        .sr-only {{
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }}
+
+        /* ─── Typography ─────────────────────────────────────────── */
+        .eyebrow {{
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 0.85rem;
+        }}
+        h1 {{
+            font-size: clamp(28px, 4vw, 44px);
+            font-weight: 600;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }}
+        h2 {{
+            font-size: clamp(20px, 2.8vw, 30px);
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }}
+        h3 {{
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: -0.01em;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }}
+        .text-gradient {{
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 45%, #007AFF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }}
+
+        /* ─── Proposal Header ───────────────────────────────────── */
+        .proposal-header {{
+            height: 52px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--padding-h);
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }}
+        .header-logo {{
+            height: 26px;
+            width: auto;
+            filter: brightness(0);
+            opacity: 0.75;
+        }}
+        .header-badge {{
+            font-size: 0.67rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--primary);
+            background: rgba(255,107,107,0.08);
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,107,107,0.2);
+        }}
+        .header-date {{
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }}
+
+        /* ─── Hero ──────────────────────────────────────────────── */
+        .hero-section {{
+            padding: 44px var(--padding-h) 36px;
+            background: white;
+        }}
+        .hero-subline {{
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }}
+        .coral-rule {{
+            width: 56px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }}
+
+        /* ─── Facts ─────────────────────────────────────────────── */
+        .facts-section {{
+            background: #f7f8fa;
+            padding: 52px var(--padding-h);
+        }}
+        .facts-eyebrow {{
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }}
+        .facts-heading {{
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 32px;
+        }}
+        .facts-stats-row {{
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }}
+        .facts-risk-row {{
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }}
+        .fact-stat-card {{
+            background: #fff;
+            border-radius: 14px;
+            padding: 24px 22px 20px;
+            border: 1px solid rgba(0,0,0,0.06);
+        }}
+        .fact-stat-value {{
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1.1;
+            margin-bottom: 10px;
+        }}
+        .fact-stat-label {{
+            font-size: 0.82rem;
+            color: #555;
+            line-height: 1.5;
+        }}
+        .fact-risk-card {{
+            background: #fff;
+            border-radius: 14px;
+            padding: 18px 20px;
+            border: 1px solid rgba(0,0,0,0.06);
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }}
+        .fact-risk-icon {{
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            background: rgba(255,107,107,0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }}
+        .fact-risk-title {{
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 4px;
+        }}
+        .fact-risk-desc {{
+            font-size: 0.79rem;
+            color: #666;
+            line-height: 1.5;
+        }}
+
+        /* ─── 5-Stage Monitoring ────────────────────────────────── */
+        .stages-section {{
+            padding: 36px var(--padding-h);
+            background: var(--bg-alt);
+            border-top: 1px solid var(--border);
+        }}
+        .section-header {{ margin-bottom: 1.5rem; }}
+        .section-header h2 {{ margin-bottom: 0.3rem; }}
+        .section-subtext {{
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }}
+        .stages-flow {{
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            position: relative;
+        }}
+        .stages-flow::before {{
+            content: '';
+            position: absolute;
+            top: 27px;
+            left: calc(10% + 14px);
+            right: calc(10% + 14px);
+            height: 1px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0.25;
+            z-index: 0;
+        }}
+        .stage-card {{
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 1.1rem 0.9rem;
+            margin: 0 5px;
+            position: relative;
+            z-index: 1;
+            transition: border-color 0.25s var(--ease-out),
+                        box-shadow 0.25s var(--ease-out),
+                        transform 0.25s var(--ease-out);
+        }}
+        .stage-card:hover {{
+            border-color: rgba(255,107,107,0.3);
+            box-shadow: 0 10px 24px -6px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }}
+        .stage-number {{
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 0.45rem;
+        }}
+        .stage-name {{
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            line-height: 1.25;
+        }}
+        .stage-logs {{
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.28rem;
+        }}
+        .stage-logs li {{
+            font-size: 0.71rem;
+            color: var(--text-secondary);
+            line-height: 1.45;
+            padding-left: 12px;
+            position: relative;
+        }}
+        .stage-logs li::before {{
+            content: '\2014';
+            position: absolute;
+            left: 0;
+            color: var(--text-muted);
+            font-size: 0.6rem;
+            top: 1px;
+        }}
+        .stage-badge {{
+            display: inline-block;
+            font-size: 0.57rem;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--secondary);
+            background: rgba(0,122,255,0.07);
+            border: 1px solid rgba(0,122,255,0.18);
+            border-radius: 4px;
+            padding: 1px 6px;
+            margin-top: 0.6rem;
+        }}
+
+        /* ─── Breach Alerting ───────────────────────────────────── */
+        .breach-section {{
+            background: var(--primary);
+            padding: 44px var(--padding-h);
+            overflow: hidden;
+            position: relative;
+        }}
+        .breach-section::before {{
+            content: '';
+            position: absolute;
+            top: -60px; right: -60px;
+            width: 340px; height: 340px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 65%);
+            pointer-events: none;
+        }}
+        .breach-inner {{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }}
+        .breach-eyebrow {{
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 0.7rem;
+            display: block;
+        }}
+        .breach-text h2 {{
+            font-size: clamp(18px, 2.5vw, 26px);
+            font-weight: 600;
+            color: white;
+            line-height: 1.15;
+            margin-bottom: 0.9rem;
+            letter-spacing: -0.02em;
+        }}
+        .breach-text p {{
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.82);
+            line-height: 1.7;
+            margin-bottom: 1.25rem;
+        }}
+        .breach-facts {{ display: flex; flex-direction: column; gap: 0.45rem; }}
+        .breach-fact {{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.88);
+            font-weight: 500;
+        }}
+        .breach-fact::before {{
+            content: '\2192';
+            font-size: 0.72rem;
+            opacity: 0.65;
+            flex-shrink: 0;
+        }}
+        .breach-image-wrap {{
+            position: relative;
+            padding-right: 80px;
+            padding-bottom: 30px;
+        }}
+        .breach-image-wrap > .breach-graph {{
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 24px 50px rgba(0,0,0,0.25);
+        }}
+        .breach-image-wrap > .breach-graph img {{ width: 100%; height: auto; display: block; }}
+        .breach-device-wrap {{
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 115px;
+        }}
+        .breach-device-wrap img {{
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 10px 22px rgba(0,0,0,0.35));
+        }}
+
+        /* ─── LMS Spotlight ─────────────────────────────────────── */
+        .lms-spotlight {{
+            background: white;
+            padding: 44px var(--padding-h);
+            overflow: hidden;
+        }}
+        .lms-inner {{
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 3rem;
+            align-items: center;
+        }}
+        .lms-image-wrap {{
+            border-radius: 16px;
+            overflow: hidden;
+            min-width: 0;
+            box-shadow: 0 20px 44px rgba(0,0,0,0.11),
+                        0 0 0 1px rgba(0,0,0,0.05);
+            order: -1;
+        }}
+        .lms-image-wrap img {{ width: 100%; height: auto; display: block; }}
+        .lms-text .eyebrow {{ margin-bottom: 0.7rem; }}
+        .lms-text h2 {{
+            font-size: clamp(17px, 2.2vw, 24px);
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.2;
+            margin-bottom: 0.85rem;
+            letter-spacing: -0.02em;
+        }}
+        .lms-text p {{
+            font-size: 0.87rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 1.1rem;
+        }}
+        .lms-facts {{ display: flex; flex-direction: column; gap: 0.4rem; }}
+        .lms-fact {{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.81rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }}
+        .lms-fact::before {{
+            content: '\2192';
+            font-size: 0.7rem;
+            color: var(--primary);
+            opacity: 0.8;
+            flex-shrink: 0;
+        }}
+
+        /* ─── Features Grid ─────────────────────────────────────── */
+        .features-grid-section {{
+            padding: 44px var(--padding-h);
+            background: var(--bg-alt);
+            border-top: 1px solid var(--border);
+        }}
+        .features-grid {{
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.85rem;
+            margin-top: 1.5rem;
+        }}
+        .feature-card {{
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 1.6rem 1.1rem 1.4rem;
+            text-align: center;
+            transition: border-color 0.25s var(--ease-out),
+                        box-shadow 0.25s var(--ease-out),
+                        transform 0.25s var(--ease-out);
+        }}
+        .feature-card:hover {{
+            border-color: rgba(255,107,107,0.3);
+            box-shadow: 0 10px 28px -6px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }}
+        .feature-icon {{
+            width: 46px;
+            height: 46px;
+            margin: 0 auto 1rem;
+            color: var(--primary);
+        }}
+        .feature-icon svg {{ width: 100%; height: 100%; }}
+        .feature-title {{
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }}
+        .feature-desc {{
+            font-size: 0.74rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }}
+
+        /* ─── Delivery + Pricing ────────────────────────────────── */
+        .delivery-pricing-section {{
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 44px var(--padding-h);
+        }}
+        .delivery-pricing-inner {{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3.5rem;
+            align-items: start;
+        }}
+        .timeline-col .eyebrow {{ margin-bottom: 0.7rem; }}
+        .timeline-col h2 {{ margin-bottom: 0.35rem; }}
+        .timeline-subtitle {{
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 1.75rem;
+        }}
+        .timeline {{
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }}
+        .timeline::before {{
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 8px;
+            bottom: 8px;
+            width: 1px;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+            opacity: 0.25;
+        }}
+        .tl-item {{
+            display: flex;
+            gap: 1.1rem;
+            padding-bottom: 1.35rem;
+            position: relative;
+        }}
+        .tl-item:last-child {{ padding-bottom: 0; }}
+        .tl-dot-wrap {{
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 30px;
+        }}
+        .tl-dot {{
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px rgba(255,107,107,0.3);
+            margin-top: 3px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }}
+        .tl-dot.blue {{ background: var(--secondary); box-shadow: 0 0 0 2px rgba(0,122,255,0.25); }}
+        .tl-content {{ flex: 1; }}
+        .tl-week {{
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+        }}
+        .tl-week.blue {{ color: var(--secondary); }}
+        .tl-title {{
+            font-size: 0.86rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+            line-height: 1.3;
+        }}
+        .tl-desc {{
+            font-size: 0.74rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }}
+        .pricing-col .eyebrow {{ margin-bottom: 0.7rem; }}
+        .pricing-col h2 {{ margin-bottom: 1.5rem; }}
+        .pricing-card {{
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 2rem 2rem 1.75rem;
+        }}
+        .pricing-total-label {{
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.35rem;
+        }}
+        .pricing-total-amount {{
+            font-size: clamp(32px, 4vw, 44px);
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.03em;
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }}
+        .pricing-total-currency {{
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }}
+        .pricing-divider {{
+            height: 1px;
+            background: var(--border);
+            margin-bottom: 1.25rem;
+        }}
+        .pricing-covers-label {{
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.85rem;
+        }}
+        .pricing-covers {{
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            margin-bottom: 1.5rem;
+        }}
+        .pricing-cover-item {{
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }}
+        .pricing-cover-icon {{
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            background: rgba(255,107,107,0.09);
+            border: 1px solid rgba(255,107,107,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }}
+        .pricing-cover-icon svg {{ width: 13px; height: 13px; color: var(--primary); }}
+        .pricing-cover-text h3 {{
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.1rem;
+            line-height: 1.3;
+        }}
+        .pricing-cover-text p {{
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }}
+        .pricing-note {{
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-style: italic;
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+            line-height: 1.5;
+        }}
+
+        /* ─── CTA ───────────────────────────────────────────────── */
+        .cta-section {{
+            background: #000000;
+            padding: 52px var(--padding-h);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }}
+        .cta-section::before {{
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 700px; height: 400px;
+            background: radial-gradient(ellipse, rgba(255,107,107,0.12) 0%, transparent 55%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }}
+        .cta-logo {{
+            height: 50px;
+            width: auto;
+            margin: 0 auto 1.5rem;
+            filter: brightness(0) invert(1);
+            opacity: 0.88;
+            position: relative;
+            z-index: 1;
+        }}
+        .cta-headline {{
+            font-size: clamp(22px, 4vw, 36px);
+            font-weight: 600;
+            color: white;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            margin-bottom: 0.6rem;
+            position: relative;
+            z-index: 1;
+        }}
+        .cta-subline {{
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.48);
+            margin-bottom: 2rem;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }}
+        .cta-buttons {{
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }}
+        .btn-primary {{
+            display: inline-block;
+            padding: 13px 34px;
+            background: var(--primary);
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: var(--radius-pill);
+            font-family: 'Inter', system-ui, sans-serif;
+            transition: background 0.2s, transform 0.2s var(--ease-out), box-shadow 0.2s;
+        }}
+        .btn-primary:hover {{
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255,107,107,0.4);
+        }}
+        .btn-secondary {{
+            display: inline-block;
+            padding: 13px 34px;
+            background: transparent;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: var(--radius-pill);
+            border: 1px solid rgba(255,255,255,0.22);
+            font-family: 'Inter', system-ui, sans-serif;
+            transition: border-color 0.2s, background 0.2s, transform 0.2s var(--ease-out);
+        }}
+        .btn-secondary:hover {{
+            border-color: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.06);
+            transform: translateY(-2px);
+        }}
+        .cta-contact {{
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.38);
+            position: relative;
+            z-index: 1;
+        }}
+        .cta-contact a {{
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+        }}
+
+        /* ─── Footer ────────────────────────────────────────────── */
+        .proposal-footer {{
+            background: #111111;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding: 14px var(--padding-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }}
+        .footer-logo {{
+            height: 20px;
+            width: auto;
+            filter: brightness(0) invert(1);
+            opacity: 0.35;
+        }}
+        .footer-confidential {{
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.35);
+            font-style: italic;
+        }}
+        .footer-site {{
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.35);
+        }}
+
+        /* ─── Responsive ────────────────────────────────────────── */
+        @media (max-width: 1024px) {{
+            .stages-flow {{ grid-template-columns: repeat(3, 1fr); gap: 0.65rem; }}
+            .stages-flow::before {{ display: none; }}
+            .stage-card {{ margin: 0; }}
+            .features-grid {{ grid-template-columns: repeat(3, 1fr); }}
+        }}
+        @media (max-width: 900px) {{
+            .breach-inner {{ grid-template-columns: 1fr; gap: 1.5rem; }}
+            .breach-device-wrap {{ display: none; }}
+            .lms-inner {{ grid-template-columns: 1fr; gap: 1.5rem; }}
+            .lms-image-wrap {{ order: 0; }}
+            .delivery-pricing-inner {{ grid-template-columns: 1fr; gap: 2rem; }}
+        }}
+        @media (max-width: 768px) {{
+            :root {{ --padding-h: 20px; }}
+            .stages-flow {{ grid-template-columns: 1fr 1fr; }}
+            .features-grid {{ grid-template-columns: 1fr 1fr; }}
+            .facts-stats-row {{ grid-template-columns: 1fr; }}
+            .facts-risk-row {{ grid-template-columns: 1fr; }}
+            .cta-subline {{ margin-left: 0; margin-right: 0; }}
+        }}
+    </style>
+    <style media="print">
+        @page {{ size: A4 portrait; margin: 0; }}
+        * {{
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            transition: none !important;
+            animation: none !important;
+        }}
+        html, body {{ width: 210mm; margin: 0; padding: 0; }}
+        .text-gradient {{
+            -webkit-text-fill-color: #FF6B6B !important;
+            background: none !important;
+            color: #FF6B6B !important;
+        }}
+        .proposal-header {{ position: static; padding: 0 14mm; height: 10mm; }}
+        .header-logo {{ height: 18px; }}
+        .hero-section {{ padding: 7mm 14mm 4mm; }}
+        h1 {{ font-size: 22px !important; margin-bottom: 0.55rem; }}
+        .hero-subline {{ font-size: 0.8rem; margin-bottom: 0.65rem; line-height: 1.55; }}
+        .coral-rule {{ display: none; }}
+        .stages-section {{ padding: 5mm 14mm; }}
+        h2 {{ font-size: 16px !important; margin-bottom: 0.4rem; }}
+        .section-subtext {{ font-size: 0.74rem; }}
+        .section-header {{ margin-bottom: 0.85rem; }}
+        .stages-flow {{ gap: 0; grid-template-columns: repeat(5, 1fr); }}
+        .stages-flow::before {{ top: 20px; display: block; }}
+        .stage-card {{ padding: 0.7rem 0.65rem; border-radius: 12px; margin: 0 3px; }}
+        .stage-number {{ font-size: 0.53rem; margin-bottom: 0.28rem; }}
+        .stage-name {{ font-size: 0.74rem; margin-bottom: 0.35rem; }}
+        .stage-logs li {{ font-size: 0.62rem; line-height: 1.38; padding-left: 10px; }}
+        .stage-badge {{ font-size: 0.49rem; padding: 1px 5px; margin-top: 0.4rem; }}
+        .breach-section {{ padding: 7mm 14mm; }}
+        .breach-inner {{ gap: 2rem; grid-template-columns: 1fr 1fr; }}
+        .breach-text h2 {{ font-size: 15px !important; margin-bottom: 0.55rem; }}
+        .breach-text p {{ font-size: 0.77rem; margin-bottom: 0.65rem; line-height: 1.55; }}
+        .breach-fact {{ font-size: 0.71rem; }}
+        .breach-graph {{ border-radius: 10px; box-shadow: none; }}
+        .breach-device-wrap {{ display: block; width: 90px; }}
+        .lms-spotlight {{ padding: 7mm 14mm; }}
+        .lms-inner {{ gap: 1.75rem; grid-template-columns: 1fr 1fr; }}
+        .lms-image-wrap {{ border-radius: 10px; box-shadow: none; border: 1px solid rgba(0,0,0,0.07); }}
+        .lms-text h2 {{ font-size: 15px !important; margin-bottom: 0.55rem; }}
+        .lms-text p {{ font-size: 0.77rem; margin-bottom: 0.65rem; line-height: 1.55; }}
+        .lms-fact {{ font-size: 0.71rem; }}
+        .features-grid-section {{ padding: 4mm 14mm; }}
+        .features-grid {{ gap: 0.45rem; margin-top: 0.75rem; grid-template-columns: repeat(5, 1fr); }}
+        .feature-card {{ padding: 0.9rem 0.65rem; border-radius: 12px; }}
+        .feature-icon {{ width: 32px; height: 32px; margin-bottom: 0.55rem; }}
+        .feature-title {{ font-size: 0.68rem; margin-bottom: 0.28rem; }}
+        .feature-desc {{ font-size: 0.6rem; line-height: 1.42; }}
+        .delivery-pricing-section {{ padding: 5mm 14mm; }}
+        .delivery-pricing-inner {{ gap: 2rem; grid-template-columns: 1fr 1fr; }}
+        .tl-desc {{ font-size: 0.63rem; line-height: 1.4; }}
+        .tl-title {{ font-size: 0.74rem; }}
+        .tl-week {{ font-size: 0.53rem; }}
+        .tl-item {{ padding-bottom: 0.9rem; }}
+        .pricing-card {{ padding: 1.25rem 1.25rem 1rem; border-radius: 16px; }}
+        .pricing-total-amount {{ font-size: 28px !important; }}
+        .pricing-cover-text h3 {{ font-size: 0.72rem; }}
+        .pricing-cover-text p {{ font-size: 0.62rem; }}
+        .pricing-note {{ font-size: 0.62rem; padding-top: 0.65rem; }}
+        .cta-section {{ padding: 5mm 14mm; }}
+        .cta-logo {{ height: 30px; margin-bottom: 0.65rem; }}
+        .cta-headline {{ font-size: 16px !important; margin-bottom: 0.3rem; }}
+        .cta-subline {{ font-size: 0.77rem; margin-bottom: 0.9rem; }}
+        .btn-primary, .btn-secondary {{ padding: 8px 20px; font-size: 0.75rem; }}
+        .cta-contact {{ font-size: 0.7rem; margin-top: 0.65rem; }}
+        .proposal-footer {{ padding: 3mm 14mm; }}
+        .footer-logo {{ height: 15px; }}
+        .footer-confidential, .footer-site {{ font-size: 0.62rem; }}
+    </style>
+</head>
+<body>
+
+<!-- ── Proposal Header ────────────────────────────── -->
+<header class="proposal-header">
+    <img src="{LOGO}" alt="SafeTrack" class="header-logo">
+    <span class="header-badge">Confidential Proposal</span>
+    <span class="header-date">March 2026</span>
+</header>
+
+<main id="main-content">
+
+    <!-- ── Page 1: Monitoring + Alerting ─────────── -->
+
+    <section id="hero" class="hero-section" aria-label="Introduction">
+        <span class="eyebrow">Food Safety Compliance &nbsp;&middot;&nbsp; The Hellenic Club, Canberra</span>
+        <h1>Your Kitchen Shouldn&rsquo;t Rely on<br><span class="text-gradient">Who&rsquo;s Standing Watch</span> Tonight</h1>
+        <p class="hero-subline">In a high-volume kitchen, food safety lives in experienced heads &mdash; and that&rsquo;s a single point of failure. SafeTrack digitises what your head chef already knows: every receiving check, every temperature log, every corrective action, running reliably without them needing to be everywhere at once.</p>
+        <div class="coral-rule" aria-hidden="true"></div>
+    </section>
+
+    <section id="why-manual" class="facts-section" aria-labelledby="facts-heading">
+        <span class="facts-eyebrow">Why Manual Is No Longer Enough</span>
+        <h2 id="facts-heading" class="facts-heading">The cost of doing it the old way</h2>
+        <div class="facts-stats-row">
+            <div class="fact-stat-card">
+                <div class="fact-stat-value">30&ndash;40%</div>
+                <div class="fact-stat-label">Of quality team time lost to manual record compilation and audit prep</div>
+            </div>
+            <div class="fact-stat-card">
+                <div class="fact-stat-value">8&ndash;72hr</div>
+                <div class="fact-stat-label">Typical breach detection delay in manual monitoring environments</div>
+            </div>
+            <div class="fact-stat-card">
+                <div class="fact-stat-value">14&ndash;28d</div>
+                <div class="fact-stat-label">Required to achieve audit readiness vs. on-demand validation</div>
+            </div>
+        </div>
+        <div class="facts-risk-row">
+            <div class="fact-risk-card">
+                <div class="fact-risk-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="fact-risk-title">$250K&ndash;$1M+ Per Incident</div>
+                    <div class="fact-risk-desc">Recalls, rework, and disposal costs from preventable breaches</div>
+                </div>
+            </div>
+            <div class="fact-risk-card">
+                <div class="fact-risk-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <circle cx="12" cy="8" r="6"/>
+                        <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="fact-risk-title">Certification Loss</div>
+                    <div class="fact-risk-desc">Market access restricted and customer delistings when audits fail</div>
+                </div>
+            </div>
+            <div class="fact-risk-card">
+                <div class="fact-risk-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/>
+                        <polyline points="17 18 23 18 23 12"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="fact-risk-title">Brand Damage</div>
+                    <div class="fact-risk-desc">Customer trust eroded and competitive disadvantage from public incidents</div>
+                </div>
+            </div>
+            <div class="fact-risk-card">
+                <div class="fact-risk-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                        <polyline points="17 6 23 6 23 12"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="fact-risk-title">Scale Constraint</div>
+                    <div class="fact-risk-desc">Unable to grow without proportional compliance overhead and headcount</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="monitoring-stages" class="stages-section" aria-labelledby="stages-heading">
+        <div class="section-header">
+            <span class="eyebrow">Digital Temperature Monitoring</span>
+            <h2 id="stages-heading">Five Stages. <span class="text-gradient">Every Check Logged.</span></h2>
+            <p class="section-subtext">SafeTrack covers the full journey &mdash; from the morning delivery to the last plate leaving the pass &mdash; every CCP captured, timestamped, and audit-ready.</p>
+        </div>
+        <div class="stages-flow">
+            <div class="stage-card">
+                <div class="stage-number">Stage 01</div>
+                <div class="stage-name">Receiving</div>
+                <ul class="stage-logs">
+                    <li>Delivery vehicle temp checked on arrival</li>
+                    <li>Probe reading per incoming batch</li>
+                    <li>Supplier name and reject/accept logged</li>
+                </ul>
+            </div>
+            <div class="stage-card">
+                <div class="stage-number">Stage 02</div>
+                <div class="stage-name">Cold Storage</div>
+                <ul class="stage-logs">
+                    <li>Cool room monitored continuously, 24/7</li>
+                    <li>Alert the moment the reading starts climbing</li>
+                    <li>Full overnight history, always on record</li>
+                </ul>
+                <div class="stage-badge">Sensor Monitored</div>
+            </div>
+            <div class="stage-card">
+                <div class="stage-number">Stage 03</div>
+                <div class="stage-name">Preparation</div>
+                <ul class="stage-logs">
+                    <li>Batch-by-batch time tracking for cold prep</li>
+                    <li>Alert when a batch has been out too long</li>
+                    <li>High-risk items flagged: dairy, egg, mince</li>
+                </ul>
+            </div>
+            <div class="stage-card">
+                <div class="stage-number">Stage 04</div>
+                <div class="stage-name">Cooking</div>
+                <ul class="stage-logs">
+                    <li>Probe reading logged per dish or batch</li>
+                    <li>High-risk items: pies, mince, pastry, sauces</li>
+                    <li>Documented exceptions for medium-rare orders</li>
+                </ul>
+            </div>
+            <div class="stage-card">
+                <div class="stage-number">Stage 05</div>
+                <div class="stage-name">Hot Holding &amp; Service</div>
+                <ul class="stage-logs">
+                    <li>Holding temp checked before service opens</li>
+                    <li>Re-check log during extended service runs</li>
+                    <li>Final probe before it leaves the pass</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="breach-alerting" class="breach-section" aria-labelledby="breach-heading">
+        <div class="breach-inner">
+            <div class="breach-text">
+                <span class="breach-eyebrow">Automated Alerting &amp; Corrective Actions</span>
+                <h2 id="breach-heading">The Moment Something Goes Wrong, You Know About It</h2>
+                <p>The moment a reading drifts outside its critical limit &mdash; the cool room climbing overnight, a probe that doesn&rsquo;t hit the mark at service &mdash; the right people are alerted instantly and a corrective action is already open and waiting to log.</p>
+                <p style="margin-top: 0.75rem; font-size: 0.92rem; opacity: 0.85;">SafeTrack connects with your existing temperature monitoring devices via Bluetooth, Wi-Fi, or API &mdash; no rip-and-replace required.</p>
+                <div class="breach-facts">
+                    <span class="breach-fact">Threshold crossed &rarr; instant push to Head Chef &amp; Sous Chef</span>
+                    <span class="breach-fact">Corrective action form opens automatically on breach</span>
+                    <span class="breach-fact">What happened, who fixed it, when &mdash; logged and closed</span>
+                    <span class="breach-fact">Full evidence trail &mdash; timestamped, signed off, audit-ready</span>
+                </div>
+            </div>
+            <div class="breach-image-wrap">
+                <div class="breach-graph">
+                    <img src="{BREACH_GRAPH}" alt="Temperature trend graph showing a cool-room breach detection and automated alert timeline">
+                </div>
+                <div class="breach-device-wrap">
+                    <img src="{DEVICE_MOCKUP}" alt="SafeTrack mobile app showing a push notification for a temperature breach">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Page 2: Training + Capabilities + Pricing + CTA ── -->
+
+    <section id="training" class="lms-spotlight" aria-labelledby="lms-heading">
+        <div class="lms-inner">
+            <div class="lms-image-wrap">
+                <img src="{LMS_SCREENSHOT}" alt="SafeTrack Learning Management System interface showing a food-safety MCQ assessment module">
+            </div>
+            <div class="lms-text">
+                <span class="eyebrow">Built-In Training Module</span>
+                <h2 id="lms-heading">Every New Face Gets Trained, Assessed, and Certified Before They Touch a Chopping Board</h2>
+                <p>SafeTrack&rsquo;s built-in Assessment Module lets you build and assign food safety MCQ assessments &mdash; auto-scored, directly linked to each staff member&rsquo;s profile. Personal hygiene, temperature control, cross-contamination, allergen handling, chemical use &mdash; everything your kitchen requires, built into the same system the whole team uses on their phone, completable in under 25 minutes.</p>
+                <div class="lms-facts">
+                    <span class="lms-fact">Aligned to FSANZ Standards 3.2.1 &amp; 3.2.2 and ACT Food Act 2001</span>
+                    <span class="lms-fact">Auto-scored MCQs &mdash; results recorded without manual grading</span>
+                    <span class="lms-fact">Certificate records linked to each staff member&rsquo;s profile</span>
+                    <span class="lms-fact">Full training history on demand for inspections and audits</span>
+                    <span class="lms-fact">Completable on any device &mdash; floor, break room, or day one</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="platform-features" class="features-grid-section" aria-labelledby="features-heading">
+        <span class="eyebrow">Platform Capabilities</span>
+        <h2 id="features-heading">Everything Your Kitchen Needs, <span class="text-gradient">In One System</span></h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Digital Temp Monitoring</div>
+                <p class="feature-desc">Every stage from receiving to service logged, timestamped, and searchable. No more paper logs.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+                        <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                        <circle cx="12" cy="20" r="0.5" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="feature-title">IoT Temperature Sensors</div>
+                <p class="feature-desc">Wireless probes monitor cool rooms and hot holding 24/7 &mdash; no manual checks, no gaps overnight.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Instant Breach Alerts</div>
+                <p class="feature-desc">Push notification to Head Chef and Sous Chef the moment any CCP reading goes outside its limit.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+                        <rect x="9" y="3" width="6" height="4" rx="2"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Corrective Action Workflow</div>
+                <p class="feature-desc">Breach triggers an automatic action form &mdash; logged, signed off, and stored in the audit trail.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Built-In Assessment Module</div>
+                <p class="feature-desc">MCQ assessments auto-scored, certificates linked to each staff member &mdash; completable on any device.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Paperless Records</div>
+                <p class="feature-desc">Replace paper logs for receiving, cooking, holding, and cleaning &mdash; audit-ready on demand.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Multi-Site Dashboard</div>
+                <p class="feature-desc">Full compliance status, open actions, and training gaps &mdash; all in one view for the Hellenic Club kitchen.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Full Traceability</div>
+                <p class="feature-desc">Every action tied to who, when, and what batch. Trace any incident back through the chain in seconds.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <rect x="9" y="2" width="6" height="4" rx="1"/>
+                        <path d="M3 6h18v16H3z"/>
+                        <line x1="8" y1="12" x2="16" y2="12"/>
+                        <line x1="8" y1="16" x2="13" y2="16"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Dynamic Form Builder</div>
+                <p class="feature-desc">Custom checklists and forms with conditional logic, validation rules, and digital sign-off &mdash; built without code.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <polyline points="9 11 12 14 22 4"/>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Approval Workflows</div>
+                <p class="feature-desc">Multi-step sign-offs with role-based routing &mdash; corrective actions, receiving checks, and cleaning sign-offs all tracked.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="delivery-pricing" class="delivery-pricing-section" aria-labelledby="timeline-heading">
+        <div class="delivery-pricing-inner">
+
+            <div class="timeline-col">
+                <span class="eyebrow">Delivery Timeline</span>
+                <h2 id="timeline-heading">Live in 6 Weeks</h2>
+                <p class="timeline-subtitle">A structured rollout built around your kitchen calendar &mdash; minimal disruption, no big-bang go-live.</p>
+                <div class="timeline">
+                    <div class="tl-item">
+                        <div class="tl-dot-wrap"><div class="tl-dot"></div></div>
+                        <div class="tl-content">
+                            <div class="tl-week">Days 1 &ndash; 3</div>
+                            <div class="tl-title">Discovery &amp; Requirements</div>
+                            <p class="tl-desc">CCP mapping walkthrough with your head chef, site confirmation for Hellenic Club, user roles defined.</p>
+                        </div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="tl-dot-wrap"><div class="tl-dot"></div></div>
+                        <div class="tl-content">
+                            <div class="tl-week">Week 1 &ndash; 2</div>
+                            <div class="tl-title">System Implementation</div>
+                            <p class="tl-desc">Platform provisioned, kitchen configured, user accounts created, IoT sensors registered and online.</p>
+                        </div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="tl-dot-wrap"><div class="tl-dot"></div></div>
+                        <div class="tl-content">
+                            <div class="tl-week">Week 2 &ndash; 4</div>
+                            <div class="tl-title">Configuration &amp; Customisation</div>
+                            <p class="tl-desc">HACCP forms built to your plan, alert thresholds set per CCP, corrective action workflows configured, supporting documents uploaded.</p>
+                        </div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="tl-dot-wrap"><div class="tl-dot blue"></div></div>
+                        <div class="tl-content">
+                            <div class="tl-week blue">Week 5</div>
+                            <div class="tl-title">Testing &amp; UAT</div>
+                            <p class="tl-desc">End-to-end testing across all 5 monitoring stages, breach alert verification, corrective action flow sign-off with your team.</p>
+                        </div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="tl-dot-wrap"><div class="tl-dot blue"></div></div>
+                        <div class="tl-content">
+                            <div class="tl-week blue">Week 6</div>
+                            <div class="tl-title">Training &amp; Go-Live</div>
+                            <p class="tl-desc">On-site kitchen staff training, assessments assigned and staff certified, management dashboard walkthrough &mdash; system live and running.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pricing-col">
+                <span class="eyebrow">Investment</span>
+                <h2>Simple, All-In Pricing</h2>
+                <div class="pricing-card">
+                    <div class="pricing-total-label">Monthly Subscription</div>
+                    <div class="pricing-total-amount">$200</div>
+                    <div class="pricing-total-currency">Per month &nbsp;&middot;&nbsp; AUD &nbsp;&middot;&nbsp; Excl. Taxes</div>
+                    <div style="display:flex; gap: 0.6rem; margin-top: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+                        <span style="font-size:0.75rem; font-weight:600; background:rgba(255,107,107,0.1); color:var(--primary); padding: 4px 10px; border-radius: 20px;">3-Year Contract</span>
+                        <span style="font-size:0.75rem; font-weight:600; background:rgba(255,107,107,0.1); color:var(--primary); padding: 4px 10px; border-radius: 20px;">Billed Annually in Advance</span>
+                    </div>
+                    <div class="pricing-divider"></div>
+                    <div class="pricing-covers-label">What&rsquo;s Covered</div>
+                    <div class="pricing-covers">
+                        <div class="pricing-cover-item">
+                            <div class="pricing-cover-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                                    <line x1="8" y1="21" x2="16" y2="21"/>
+                                    <line x1="12" y1="17" x2="12" y2="21"/>
+                                </svg>
+                            </div>
+                            <div class="pricing-cover-text">
+                                <h3>Platform Licence</h3>
+                                <p>Per kitchen licence &mdash; Hellenic Club covered for the full term</p>
+                            </div>
+                        </div>
+                        <div class="pricing-cover-item">
+                            <div class="pricing-cover-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M12 20h9"/>
+                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                                </svg>
+                            </div>
+                            <div class="pricing-cover-text">
+                                <h3>Implementation</h3>
+                                <p>Full setup, CCP configuration, IoT sensor installation, and system go-live</p>
+                            </div>
+                        </div>
+                        <div class="pricing-cover-item">
+                            <div class="pricing-cover-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                                </svg>
+                            </div>
+                            <div class="pricing-cover-text">
+                                <h3>Training</h3>
+                                <p>On-site staff training, assessment setup, and management dashboard walkthrough</p>
+                            </div>
+                        </div>
+                        <div class="pricing-cover-item">
+                            <div class="pricing-cover-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                            </div>
+                            <div class="pricing-cover-text">
+                                <h3>Support</h3>
+                                <p>Software support included for the full 3-year contract term</p>
+                            </div>
+                        </div>
+                        <div class="pricing-cover-item">
+                            <div class="pricing-cover-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+                                </svg>
+                            </div>
+                            <div class="pricing-cover-text">
+                                <h3>Thermometer Probing Device</h3>
+                                <p>One standard unit included for on-the-spot temperature readings</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="pricing-note">Sensor hardware quoted separately based on site requirements. A detailed scope will be provided post-discovery.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="cta" class="cta-section" aria-label="Schedule a Demo">
+        <img src="{LOGO}" alt="SafeTrack" class="cta-logo">
+        <h2 class="cta-headline">See It Running in Your Kitchen</h2>
+        <p class="cta-subline">A 30-minute demo built around the Hellenic Club kitchen and ACT compliance requirements.</p>
+        <div class="cta-buttons">
+            <a href="mailto:info@neuralnexus.lk?subject=SafeTrack%20Demo%20Request" class="btn-primary">Schedule a Demo</a>
+            <a href="https://wa.me/94777880390" target="_blank" rel="noopener noreferrer" class="btn-secondary">WhatsApp Us</a>
+        </div>
+        <p class="cta-contact">
+            info@neuralnexus.lk &nbsp;&middot;&nbsp;
+            WhatsApp <a href="https://wa.me/94777880390">+94 77 788 0390</a>
+        </p>
+    </section>
+
+</main>
+
+<footer class="proposal-footer">
+    <img src="{LOGO}" alt="SafeTrack" class="footer-logo">
+    <span class="footer-confidential">Confidential &#8212; Prepared for The Hellenic Club, Canberra</span>
+    <span class="footer-site">neuralnexus.lk</span>
+</footer>
+
+<script>
+    const observer = new IntersectionObserver((entries) => {{
+        entries.forEach(e => {{
+            if (e.isIntersecting) {{
+                e.target.style.opacity = '1';
+                e.target.style.transform = 'translateY(0)';
+                observer.unobserve(e.target);
+            }}
+        }});
+    }}, {{ threshold: 0.06, rootMargin: '0px 0px -30px 0px' }});
+
+    document.querySelectorAll('.stage-card, .feature-card, .lms-inner, .pricing-card').forEach((el, i) => {{
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(16px)';
+        el.style.transition = `opacity 0.45s ease ${{i * 0.04}}s, transform 0.45s ease ${{i * 0.04}}s`;
+        observer.observe(el);
+    }});
+</script>
+
+</body>
+</html>"""
+
+with open(DEST, "w", encoding="utf-8") as fh:
+    fh.write(HTML)
+
+import os
+size_kb = os.path.getsize(DEST) / 1024
+print(f"Written: {DEST}  ({size_kb:.1f} KB)")

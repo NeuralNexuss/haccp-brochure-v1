@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920" />
+  <title>UAE Warehouse – Temperature Monitoring</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 1920px;
+      height: 1072px;
+      overflow: hidden;
+      background: #F2F4F7;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      color: #111827;
+    }
+
+    .page {
+      width: 1920px;
+      height: 1072px;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 56px 36px;
+      gap: 0;
+    }
+
+    /* ── Header ─────────────────────────────────── */
+    .header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .app-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+
+    .header-text h1 {
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #0F172A;
+      line-height: 1.1;
+    }
+
+    .header-text p {
+      font-size: 14px;
+      color: #6B7280;
+      margin-top: 4px;
+      font-weight: 400;
+    }
+
+    .btn-close {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 22px;
+      background: #3B82F6;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── Stat Cards ──────────────────────────────── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+
+    .card {
+      border-radius: 16px;
+      padding: 22px 28px 24px;
+      border: 1px solid transparent;
+    }
+
+    .card-label {
+      font-size: 13.5px;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .card-value {
+      font-size: 64px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    /* Card 1 – Total Readings */
+    .card-readings {
+      background: #EFF6FF;
+      border-color: #DBEAFE;
+    }
+    .card-readings .card-label { color: #64748B; }
+    .card-readings .card-value { color: #1E3A8A; }
+
+    /* Card 2 – Current */
+    .card-current {
+      background: #F0FDF4;
+      border-color: #DCFCE7;
+    }
+    .card-current .card-label { color: #64748B; }
+    .card-current .card-value { color: #166534; }
+
+    /* Card 3 – Average */
+    .card-average {
+      background: #FFFBEB;
+      border-color: #FDE68A;
+    }
+    .card-average .card-label { color: #64748B; }
+    .card-average .card-value { color: #78350F; }
+
+    /* Card 4 – Limits */
+    .card-limits {
+      background: #FEF2F2;
+      border-color: #FECACA;
+    }
+    .card-limits .card-label { color: #EF4444; font-weight: 600; }
+    .card-limits .card-value { color: #7F1D1D; }
+
+    /* ── Chart Card ──────────────────────────────── */
+    .chart-card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #E5E7EB;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      flex: 1;
+      min-height: 0;
+      padding: 28px 28px 20px;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+
+    .chart-wrap {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+    }
+
+    /* ── Refresh Button ──────────────────────────── */
+    .footer {
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .btn-refresh {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 14px 40px;
+      background: #3B82F6;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      min-width: 220px;
+      justify-content: center;
+    }
+
+    .btn-refresh svg {
+      width: 18px;
+      height: 18px;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <!-- Colorful analytics app icon -->
+      <svg class="app-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="48" height="48" rx="10" fill="#F8FAFC"/>
+        <rect x="6" y="6" width="10" height="10" rx="2" fill="#3B82F6"/>
+        <rect x="19" y="6" width="10" height="10" rx="2" fill="#10B981"/>
+        <rect x="32" y="6" width="10" height="10" rx="2" fill="#F59E0B"/>
+        <rect x="6" y="19" width="10" height="10" rx="2" fill="#8B5CF6"/>
+        <rect x="19" y="19" width="10" height="10" rx="2" fill="#EF4444"/>
+        <rect x="32" y="19" width="10" height="10" rx="2" fill="#3B82F6"/>
+        <rect x="6" y="32" width="10" height="10" rx="2" fill="#10B981"/>
+        <rect x="19" y="32" width="10" height="10" rx="2" fill="#F59E0B"/>
+        <rect x="32" y="32" width="10" height="10" rx="2" fill="#8B5CF6"/>
+      </svg>
+      <div class="header-text">
+        <h1>UAE warehouse</h1>
+        <p>Temperature variation over the last 24 hours</p>
+      </div>
+    </div>
+    <button class="btn-close">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M1 1L13 13M13 1L1 13" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Close
+    </button>
+  </header>
+
+  <!-- Stat Cards -->
+  <div class="cards">
+    <div class="card card-readings">
+      <div class="card-label">Total Readings</div>
+      <div class="card-value">160</div>
+    </div>
+    <div class="card card-current">
+      <div class="card-label">Current</div>
+      <div class="card-value">24.5</div>
+    </div>
+    <div class="card card-average">
+      <div class="card-label">Average</div>
+      <div class="card-value">22.2</div>
+    </div>
+    <div class="card card-limits">
+      <div class="card-label">Limits</div>
+      <div class="card-value">0 - 20</div>
+    </div>
+  </div>
+
+  <!-- Chart Card -->
+  <div class="chart-card">
+    <div class="chart-wrap">
+      <canvas id="tempChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Refresh Button -->
+  <div class="footer">
+    <button class="btn-refresh">
+      <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 9A7 7 0 1 1 9 2" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <path d="M9 2L12 5M9 2L12.5 0" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="9,1 13,5 9,5" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Refresh Data
+    </button>
+  </div>
+
+</div>
+
+<script>
+  /* ── Generate ~160 temperature readings ───────── */
+  function generateData() {
+    const data = [];
+    const n = 160;
+    for (let i = 0; i < n; i++) {
+      let temp;
+      if (i < 100) {
+        // Stable plateau ~21 with very minor variation
+        temp = 21.0 + (Math.sin(i * 0.3) * 0.25) + (Math.random() * 0.2 - 0.1);
+      } else if (i < 120) {
+        // Steep descent: 21 → 9 over 20 readings
+        const t = (i - 100) / 20;
+        temp = 21.0 - (12.0 * t * t) + (Math.random() * 0.3 - 0.15);
+      } else if (i < 126) {
+        // Trough: hover around 9
+        temp = 9.0 + (Math.random() * 0.5 - 0.25);
+      } else {
+        // Recovery: 9 → 17 over remaining readings
+        const t = (i - 126) / (n - 126);
+        temp = 9.0 + (8.0 * Math.pow(t, 0.65)) + (Math.random() * 0.3 - 0.15);
+      }
+      data.push(Math.round(temp * 10) / 10);
+    }
+    return data;
+  }
+
+  /* ── Build x-axis labels (18 ticks, 80-min apart) */
+  function buildLabels() {
+    // Start: Feb 5, 12:17 — 18 labels at 80-min intervals
+    const start = new Date(2025, 1, 5, 12, 17); // Feb 5, 12:17
+    const labels = [];
+    for (let i = 0; i < 18; i++) {
+      const d = new Date(start.getTime() + i * 80 * 60000);
+      const month = 'Feb';
+      const day = d.getDate();
+      const hh = String(d.getHours()).padStart(2, '0');
+      const mm = String(d.getMinutes()).padStart(2, '0');
+      labels.push(`${month} ${day}, ${hh}:${mm}`);
+    }
+    return labels;
+  }
+
+  /* ── Map 160 data points to 18 tick positions ─── */
+  function buildXLabels() {
+    const n = 160;
+    const ticks = 18;
+    const all = new Array(n).fill('');
+    for (let i = 0; i < ticks; i++) {
+      const idx = Math.round(i * (n - 1) / (ticks - 1));
+      all[idx] = buildLabels()[i];
+    }
+    return all;
+  }
+
+  const tempData = generateData();
+  const xLabels = buildXLabels();
+
+  const ctx = document.getElementById('tempChart').getContext('2d');
+
+  Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif';
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: xLabels,
+      datasets: [{
+        label: 'temp',
+        data: tempData,
+        borderColor: '#10B981',
+        backgroundColor: 'transparent',
+        borderWidth: 1.8,
+        pointStyle: 'rectRot',
+        pointRadius: 5,
+        pointBackgroundColor: '#10B981',
+        pointBorderColor: '#10B981',
+        pointHoverRadius: 7,
+        tension: 0,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      layout: { padding: { left: 8, right: 16, top: 10, bottom: 0 } },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom',
+          align: 'center',
+          labels: {
+            usePointStyle: true,
+            pointStyle: 'circle',
+            color: '#374151',
+            font: { size: 13 },
+            padding: 20,
+            boxWidth: 10,
+          }
+        },
+        tooltip: {
+          backgroundColor: '#1F2937',
+          titleColor: '#F9FAFB',
+          bodyColor: '#D1D5DB',
+          padding: 10,
+          displayColors: true,
+          callbacks: {
+            title: (items) => {
+              const idx = items[0].dataIndex;
+              const tickLabels = buildLabels();
+              // Find nearest labelled tick
+              const tickIdx = Math.round(idx * 17 / 159);
+              return tickLabels[tickIdx] || '';
+            },
+            label: (item) => ` ${item.parsed.y.toFixed(1)} °C`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            color: '#E5E7EB',
+            drawBorder: false,
+          },
+          border: { display: false },
+          ticks: {
+            maxRotation: 45,
+            minRotation: 45,
+            color: '#9CA3AF',
+            font: { size: 11.5 },
+            autoSkip: false,
+            callback: function(val, index) {
+              return xLabels[index] !== '' ? xLabels[index] : null;
+            }
+          }
+        },
+        y: {
+          min: 0,
+          max: 28,
+          grid: {
+            color: '#E5E7EB',
+            drawBorder: false,
+          },
+          border: { display: false },
+          ticks: {
+            stepSize: 7,
+            color: '#9CA3AF',
+            font: { size: 12 },
+            padding: 8,
+          }
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>
